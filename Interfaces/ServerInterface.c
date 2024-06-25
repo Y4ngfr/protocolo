@@ -63,8 +63,11 @@ Server* serverCreate(int serverPort, const char* serverIp)
 
 void serverCleanup(Server* server)
 {
+    char buff[1];
+
+    while(read(server->client->clientSocket, buff, 1) != 0); // Espera o cliente encerrar primeiro
+
     close(server->serverSocket);
-    // clientCleanup(server->client);
     free(server);
 }
 
@@ -79,9 +82,15 @@ int serverWaitForConnections(Server* server)
 
     clientSocket = accept(server->serverSocket, (struct sockaddr*)&clientAdress, &clientAdressLenght);
 
+    if(clientSocket == -1){
+        printf("Erro: Socket do cliente inválido\n");
+        return -1;
+    }
+
     newClient = clientCreate();
 
     if(newClient == NULL){
+        printf("Erro: Não foi possível criar novo cliente\n");
         return -1;
     }
 
@@ -89,13 +98,14 @@ int serverWaitForConnections(Server* server)
     newClient->clientAdress = clientAdress;
 
     server->client = newClient;
+    newClient = NULL;
 
     return 0;
 }
 
 void serverGetClientIP(Client* client, char* buffer)
 {
-    inet_ntop(AF_INET, &(client->clientAdress), buffer, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &(client->clientAdress.sin_addr), buffer, INET_ADDRSTRLEN);
 }
 
 ssize_t serverReciveClientMessage(Client* client, char* buffer)

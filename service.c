@@ -13,7 +13,7 @@ int main()
     char clientMessage[50];
     char clientIp[20];
 
-    server = serverCreate(3014, "127.0.0.1");
+    server = serverCreate(3003, "127.0.0.1");
 
     if(server == NULL) {
         exit(1);

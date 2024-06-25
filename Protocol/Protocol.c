@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libAudioRecorder/libAudioRecorder.h>
 #include "Protocol.h"
 
 size_t generateRequestMessage(int type, RecordingParams *params, char* messageBuffer)
@@ -108,6 +109,7 @@ size_t generateRequestMessage(int type, RecordingParams *params, char* messageBu
     }
 }
 
+// nome da função deve ser trocado (reply message deve ser chamado apenas DEPOIS)
 void generateReplyMessage(const char* requestMessage, char* messageBuffer)
 {
     char instructionRequested[17];
@@ -123,6 +125,7 @@ void generateReplyMessage(const char* requestMessage, char* messageBuffer)
         float recordingTime;
         char auxBuffer[10];
         size_t paramsOffset;
+        pid_t PID;
 
         paramsOffset = strcspn(&(requestMessage[37 + typeOffset]), " ");
         strncpy(auxBuffer, &(requestMessage[37 + typeOffset]), paramsOffset);
@@ -143,6 +146,25 @@ void generateReplyMessage(const char* requestMessage, char* messageBuffer)
         recordingTime = atof(auxBuffer);
 
         printf("deviceIndex: %d, recordingLoops: %d, recordingTime: %f\n", deviceIndex, recordingLoops, recordingTime);
+
+        PID = fork();
+
+        if(PID == 0) // o trecho abaixo pode ser modularizado em outra função
+        { // processo filho
+            RecordingParams params;
+
+            params.deviceArgument = 0;
+            params.helpArgument = 0;
+            params.directory = "recordings";
+            params.deviceIndex = deviceIndex;
+            params.recordingTime = recordingTime;
+            params.repetitions = recordingLoops;
+
+            runGravador(&params);
+        }
+        else{ // processo pai
+            
+        }
 
         // abre o gravador e insere os parâmetros
         // executa a gravação ...

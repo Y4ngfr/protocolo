@@ -16,7 +16,7 @@ int main()
         exit(1);
     }
 
-    if(clientConnectToServer(client, "127.0.0.1", 3014) < 0){
+    if(clientConnectToServer(client, "127.0.0.1", 3003) < 0){
         exit(1);
     }
 
