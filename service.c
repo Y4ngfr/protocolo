@@ -9,9 +9,12 @@ int main()
 {
     Server* server;
     RecordingParams params;
+    char instruction[100];
     char requestMessage[100];
     char clientMessage[50];
     char clientIp[20];
+    // u_int8_t *buffer;
+    int running = 1;
 
     server = serverCreate(3003, "127.0.0.1");
 
@@ -21,19 +24,47 @@ int main()
 
     serverWaitForConnections(server);
 
+    serverGetClientIP(server->client, clientIp);
+    printf("Ip cliente: %s\n", clientIp);
+
     params.deviceIndex = 0;
     params.repetitions = 3;
     params.recordingTime = 4.32;
 
-    serverGetClientIP(server->client, clientIp);
-    printf("Ip cliente: %s\n", clientIp);
+    printf("Linha de comando Servidor:\n\n");
 
-    generateRequestMessage(START_MONITORING, &params, requestMessage);
-    serverSendMessageToClient(server->client, requestMessage);
+    while(running)
+    {
+        scanf("%s", instruction);
 
-    serverReciveClientMessage(server->client, clientMessage);
+        if(!strcmp("START_MONITORING", instruction))
+        {
+            generateRequestMessage(START_MONITORING, &params, requestMessage);
+        }
+        if(!strcmp("STOP_MONITORING", instruction))
+        {
+            generateRequestMessage(STOP_MONITORING, &params, requestMessage);
+        }
+        if(!strcmp("STATUS", instruction))
+        {
+            generateRequestMessage(STATUS, &params, requestMessage);
+        }
+        if(!strcmp("PULL_AUDIO", instruction))
+        {
+            generateRequestMessage(PULL_AUDIO, &params, requestMessage);
+        }
+        if(!strcmp("CLOSE_CONNECTION", instruction))
+        {
+            generateRequestMessage(CLOSE_CONNECTION, &params, requestMessage);
+            running = 0;
+        }
 
-    printf("%s\n", clientMessage);
+        serverSendMessageToClient(server->client, requestMessage);
+
+        serverReciveClientMessage(server->client, clientMessage);
+
+        printf("%s\n", clientMessage);
+    }
 
     serverCleanup(server);
 

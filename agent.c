@@ -7,8 +7,9 @@
 int main()
 {
     Client* client;
-    char replyToServer[] = "dados, dados, dados, dados";
+    char replyToServer[100];
     char serverMessage[100];
+    int running = 1;
 
     client = clientCreate();
 
@@ -20,19 +21,29 @@ int main()
         exit(1);
     }
 
-    if(clientReciveServerMessage(client, serverMessage) < 0){
-        exit(1);
+    while(running)
+    {
+        RequestData requestData;
+        u_int32_t size;
+
+        printf("Aguardando instruções...\n");
+
+        if(clientReciveServerMessage(client, serverMessage) < 0){
+            exit(1);
+        }
+
+        printf("Instrução recebida!\n");
+        printf("%s\n", serverMessage);
+
+        requestData.running = &running;
+
+        processRequestMessage(serverMessage, &requestData);
+        size = perform(&requestData, replyToServer);
+
+        if(clientSendMessageToServer(client, replyToServer, size) < 0){
+            exit(1);
+        }
     }
-
-    printf("%s\n", serverMessage);
-
-    if(clientSendMessageToServer(client, replyToServer) < 0){
-        exit(1);
-    }
-
-    printf("\nMensagem Resposta:\n");
-    generateReplyMessage(serverMessage, replyToServer);
-    // printf("%s\n", replyToServer);
 
     clientCleanup(client);
 

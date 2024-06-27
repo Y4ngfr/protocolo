@@ -74,11 +74,11 @@ ssize_t clientReciveServerMessage(Client* client, char* buffer)
     return numberOfBytesRead;
 }
 
-ssize_t clientSendMessageToServer(Client* client, const char* message)
+ssize_t clientSendMessageToServer(Client* client, void* message, u_int32_t size)
 {
     ssize_t numberOfBytesSent;
 
-    numberOfBytesSent = send(client->clientSocket, message, strlen(message) + 1, 0);
+    numberOfBytesSent = send(client->clientSocket, message, size, 0);
 
     if(numberOfBytesSent < 0) perror("Unnable to send message. Error");
 

@@ -112,7 +112,7 @@ ssize_t serverReciveClientMessage(Client* client, char* buffer)
 {
     ssize_t numberOfBytesRead;
 
-    numberOfBytesRead = recv(client->clientSocket, buffer, 100, 0);
+    numberOfBytesRead = recv(client->clientSocket, buffer, 1000000, 0);
 
     if(numberOfBytesRead < 0) perror("Unnable to recive message. Error");
 

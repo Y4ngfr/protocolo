@@ -20,6 +20,6 @@ void clientCleanup(Client* client);
 
 int clientConnectToServer(Client* client, const char* serverIp, const int port);
 ssize_t clientReciveServerMessage(Client* client, char* buffer);
-ssize_t clientSendMessageToServer(Client* client, const char* message);
+ssize_t clientSendMessageToServer(Client* client, void* message, u_int32_t size);
 
 #endif
