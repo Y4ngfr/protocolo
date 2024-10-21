@@ -1,7 +1,11 @@
-from twisted.internet import reactor
+from twisted.internet import reactor, endpoints, ssl
 from twisted.internet.protocol import Protocol
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint
+from twisted.internet.endpoints import SSL4ClientEndpoint
+from twisted.internet.ssl import optionsForClientTLS
+from twisted.python import log
+import sys
 import subprocess
 import threading
 import os
@@ -34,16 +38,19 @@ class AgentControllerProtocol(Protocol):
                 self.transport.write(b"REPLY - Monitoring Protocol\nType: START_MONITORING\nRequest not allowed")
         
         if self.requestType == "PULL_AUDIO":
-            nameArray = self.header.split('\n')[2].split()[1:]
-            self.fileName = nameArray[0]
-            nameArray.pop(0)
-            for fileName in nameArray:
-                self.fileName += " " + fileName
             try:
-                fileNumber = int(self.fileName)
-                self.fileName = os.listdir("audios")[fileNumber]
+                nameArray = self.header.split('\n')[2].split()[1:]
+                self.fileName = nameArray[0]
+                nameArray.pop(0)
+                for fileName in nameArray:
+                    self.fileName += " " + fileName
+                try:
+                    fileNumber = int(self.fileName)
+                    self.fileName = os.listdir("audios")[fileNumber]
+                except:
+                    pass
             except:
-                pass
+                self.fileName = ""
             reply = "REPLY - Monitoring Protocol\nType: PULL_AUDIO\nFile: " + self.fileName
             self.transport.write(bytes(reply, 'utf-8'))
 
@@ -188,8 +195,9 @@ class AgentControllerFactory(ClientFactory):
     
 if __name__ == '__main__':
     try:
-        controllerEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 2001)
-        controllerEndpoint.connect(AgentControllerFactory())
+        reactor.connectSSL('localhost', 2008, AgentControllerFactory(), ssl.ClientContextFactory())
+        # controllerEndpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 2008)
+        # controllerEndpoint.connect(AgentControllerFactory())
         reactor.run()
     except Exception as error:
         print(error)

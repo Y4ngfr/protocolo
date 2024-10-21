@@ -1,9 +1,14 @@
-from twisted.internet import reactor, protocol
+from twisted.internet import reactor, protocol, endpoints
 from twisted.internet.protocol import Protocol, connectionDone
 from twisted.internet.protocol import ServerFactory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.python.failure import Failure
+from twisted.internet.endpoints import SSL4ServerEndpoint
+from twisted.internet.ssl import DefaultOpenSSLContextFactory
+from twisted.internet.ssl import CertificateOptions
 from CommandInterface import CommandInterface
+from twisted.python import log
+import sys
 import subprocess
 import threading
 import time
@@ -31,11 +36,14 @@ class ServiceControllerProtocol(Protocol):
             print()
 
         if self.responseType == "PULL_AUDIO":
-            nameArray = self.header.split('\n')[2].split()[1:]
-            self.fileName = nameArray[0]
-            nameArray.pop(0)
-            for fileName in nameArray:
-                self.fileName += " " + fileName
+            try:
+                nameArray = self.header.split('\n')[2].split()[1:]
+                self.fileName = nameArray[0]
+                nameArray.pop(0)
+                for fileName in nameArray:
+                    self.fileName += " " + fileName
+            except:
+                self.fileName = ""
             self.transporterThread.start()
             time.sleep(1) # espera para ter certeza que o DataTransporter iniciou
             self.transporterIsRunning = True
@@ -123,8 +131,14 @@ class ServiceControllerFactory(ServerFactory):
 
 if __name__ == '__main__':
     try:
-        controllerEndpoint = TCP4ServerEndpoint(reactor, 2001)
-        controllerEndpoint.listen(ServiceControllerFactory())
+        ssl_context = DefaultOpenSSLContextFactory(
+            privateKeyFileName='server.key',
+            certificateFileName='server.crt'
+        )
+        sslEndpoint = endpoints.SSL4ServerEndpoint(reactor, 2008, ssl_context)
+        sslEndpoint.listen(ServiceControllerFactory())
+        # controllerEndpoint = TCP4ServerEndpoint(reactor, 2008)
+        # controllerEndpoint.listen(ServiceControllerFactory())
         reactor.run()
     except Exception as error:
         print(error)

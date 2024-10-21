@@ -33,7 +33,6 @@ def init_service():
 def init_agent():
 	subprocess.run(['python3', 'Agent/Controller.py'])
 	
-	
 def service_help_message():
 	child = pexpect.spawn('python3 Service/Controller.py')
 	child.expect("Interface do Serviço>".encode("utf-8"))
@@ -219,14 +218,3 @@ def test_pull_audio():
 	
 	global pull_audio
 	assert pull_audio
-		
-	
-#test_successful_connection()
-#test_help_message()
-#test_start_monitoring()
-#test_status()
-#test_rename_audio_file()
-#test_pull_audio()
-#test_list_audio_files()
-#test_remove_audio_file()
-
