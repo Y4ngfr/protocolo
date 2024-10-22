@@ -45,7 +45,7 @@ def service_incorrect_name_test():
 		global incorrect_name_test
 		incorrect_name_test = True
 
-def test_rename_audio_file():
+def test_system_rename_audio_file():
 	service_thread = threading.Thread(target=service_rename_file)
 	agent_thread = threading.Thread(target=init_agent)
 	
@@ -59,7 +59,7 @@ def test_rename_audio_file():
 	global rename_file
 	assert rename_file
 
-def test_rename_file_with_incorrect_name():
+def test_system_rename_file_with_incorrect_name():
 	service_thread = threading.Thread(target=service_incorrect_name_test)
 	agent_thread = threading.Thread(target=init_agent)
 	

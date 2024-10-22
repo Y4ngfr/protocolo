@@ -62,7 +62,3 @@ def test_system_invalid_input_error():
 	
 	global test_invalid_input
 	assert test_invalid_input
-
-test_system_missing_params_error()
-time.sleep(2)
-test_system_invalid_input_error()

@@ -20,7 +20,7 @@ def service_status():
 def init_agent():
 	subprocess.run(['python3', 'Agent/Controller.py'])
 
-def test_status():
+def test_system_status():
 	service_thread = threading.Thread(target=service_status)
 	agent_thread = threading.Thread(target=init_agent)
 	

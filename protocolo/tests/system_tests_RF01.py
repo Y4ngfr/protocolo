@@ -30,7 +30,7 @@ def agent_start_monitoring():
 		global start_monitoring
 		start_monitoring = True
 
-def test_start_monitoring():
+def test_system_start_monitoring():
 	service_thread = threading.Thread(target=service_start_monitoring)
 	agent_thread = threading.Thread(target=agent_start_monitoring)
 	
@@ -43,5 +43,3 @@ def test_start_monitoring():
 	
 	global start_monitoring
 	assert start_monitoring
-
-test_start_monitoring()

@@ -34,7 +34,7 @@ def service_stop_monitoring():
 def init_agent():
     result = subprocess.run(['python3', 'Agent/Controller.py'])
 
-def test_stop_monitoring():
+def test_system_stop_monitoring():
     service_thread = threading.Thread(target=service_stop_monitoring)
     agent_thread = threading.Thread(target=init_agent)
 

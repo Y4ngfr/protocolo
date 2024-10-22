@@ -50,7 +50,7 @@ def service_incorrect_name_test():
 		global incorrect_name_test
 		incorrect_name_test = True
 
-def test_remove_audio_file():
+def test_system_remove_audio_file():
 	service_thread = threading.Thread(target=service_remove_file)
 	agent_thread = threading.Thread(target=init_agent)
 	
@@ -64,7 +64,7 @@ def test_remove_audio_file():
 	global remove_file
 	assert remove_file
 
-def test_remove_file_with_incorrect_name():
+def test_system_remove_file_with_incorrect_name():
 	service_thread = threading.Thread(target=service_incorrect_name_test)
 	agent_thread = threading.Thread(target=init_agent)
 	

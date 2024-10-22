@@ -135,6 +135,10 @@ if __name__ == '__main__':
             privateKeyFileName='server.key',
             certificateFileName='server.crt'
         )
+
+        options = CertificateOptions()
+        print(options.method)
+
         sslEndpoint = endpoints.SSL4ServerEndpoint(reactor, 2008, ssl_context)
         sslEndpoint.listen(ServiceControllerFactory())
         # controllerEndpoint = TCP4ServerEndpoint(reactor, 2008)

@@ -36,22 +36,22 @@ class ServiceDataTransporter(Protocol):
     def check_integrity(self):
         # Calcular o hash do conteúdo recebido
         received_hash = sha256(self.data)
-        print(f"Hash calculado: {received_hash}")
-        print(f"Hash esperado: {self.expected_hash}")
+        # print(f"Hash calculado: {received_hash}")
+        # print(f"Hash esperado: {self.expected_hash}")
 
         if received_hash == self.expected_hash:
             self.transport.write(b'Integridade verificada com sucesso!\n')
-            # print("Integridade verificada com sucesso!")
+            print("\nIntegridade verificada com sucesso!\n")
             self.save_file()
         else:
             self.transport.write(b'Falha na integridade do arquivo!\n')
-            # print("Falha na integridade do arquivo!")
+            print("\nFalha na integridade do arquivo!\n")
 
     def save_file(self):
         try:
             with open(self.audioFile, "wb") as file:
                 file.write(self.data)
-            print("Arquivo salvo com sucesso.")
+            print("\nArquivo salvo com sucesso\n")
         except Exception as error:
             print(f"Erro ao salvar o arquivo: {error}")
 

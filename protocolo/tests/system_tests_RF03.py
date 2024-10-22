@@ -8,6 +8,7 @@ from mutagen import MutagenError
 
 pull_audio = False
 incorrect_name_test = False
+output = ""
 
 def file_is_wav(file_path):
         try:
@@ -28,6 +29,9 @@ def service_pull_audio():
 	child.sendline("PULL_AUDIO \"audioFile.wav\"")
 	child.expect("Interface do Serviço>".encode("utf-8"))
 	child.sendline("CLOSE_CONNECTION")
+
+	global output
+	output = child.before.decode("utf-8")
 	
 	if file_is_wav("correspondencia/audioFile.wav"):
 		global pull_audio
@@ -46,7 +50,7 @@ def service_incorrect_name_test():
 		global incorrect_name_test
 		incorrect_name_test = True
 
-def test_pull_audio():
+def test_system_pull_audio():
 	service_thread = threading.Thread(target=service_pull_audio)
 	agent_thread = threading.Thread(target=init_agent)
 	
@@ -60,7 +64,7 @@ def test_pull_audio():
 	global pull_audio
 	assert pull_audio
 
-def test_get_audio_file_with_incorrect_name():
+def test_system_get_audio_file_with_incorrect_name():
 	service_thread = threading.Thread(target=service_incorrect_name_test)
 	agent_thread = threading.Thread(target=init_agent)
 	
@@ -73,3 +77,8 @@ def test_get_audio_file_with_incorrect_name():
 	
 	global incorrect_name_test
 	assert incorrect_name_test
+
+def test_system_data_integrity():
+	EXPECTED_MSG = "Integridade verificada com sucesso!"
+	global output
+	assert EXPECTED_MSG in output

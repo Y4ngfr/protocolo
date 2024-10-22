@@ -25,7 +25,7 @@ def service_list_files():
 	global list_files
 	list_files = all_files_list
 
-def test_list_audio_files():
+def test_system_list_audio_files():
 	service_thread = threading.Thread(target=service_list_files)
 	agent_thread = threading.Thread(target=init_agent)
 	
